@@ -279,7 +279,3 @@ function modalHTML() {
 
 }
 
-//* Local Storage
-
-// Guardar información en local storage
-// localStorage.setItem("apellido", "Betancur")
