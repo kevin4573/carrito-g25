@@ -12,6 +12,10 @@ const carList = document.querySelector('#car__list');
 emptyCarButton = document.querySelector('#empty__cart')
 //? Necesito tener un array que reciba los elementos que debo introducir en el carrito de compras.
 let carProducts = [];
+//* Modal
+const modalContainer = document.querySelector('#modal-container');
+const modalElement = document.querySelector('#modal');
+let modalDetails = [];
 
 //* lógica para mostrar y ocultar el carrito.
 carToggle.addEventListener('click', () => {
@@ -31,6 +35,18 @@ function eventListenersLoader() {
 
   //* Cuando se presione el botón "Empty car"
   emptyCarButton.addEventListener('click', emptyCar)
+
+  //* Se ejecuta cuando se carga la página
+  document.addEventListener('DOMContentLoaded', () => {
+    carProducts = JSON.parse(localStorage.getItem('cart')) || [];
+    carElementsHTML();
+  })
+
+  //* Cuando se presione el botón "View Details"
+  productsList.addEventListener('click', modalProduct);
+
+  //* Cuando se de click al botón para cerrar Modal
+  modalContainer.addEventListener('click', closeModal);
 
 }
 
@@ -62,7 +78,7 @@ function printProducts(products){
       </div>
       <div class="product__container__button">
         <button class="car__button add__to__car" id="add__to__car" data-id="${products[i].id}">Add to car</button>
-        <button class="product__details">View Details</button>
+        <button class="product__details" data-id="${products[i].id}">View Details</button>
       </div>
     </div>
     `
@@ -144,7 +160,13 @@ function carElementsHTML(){
     // appendChild permite insertar elementos al DOM, muy similar a innerHTML
     carList.appendChild(div);
   })
+  productsStorage()
 }
+//* LocalStorage
+function productsStorage() {
+  localStorage.setItem('cart', JSON.stringify(carProducts))
+}
+
 //* Eliminar productos del carrito
 function deleteProduct(event){
   if(event.target.classList.contains('delete__product')){
@@ -158,3 +180,94 @@ function emptyCar() {
   carProducts = [];
   carElementsHTML();
 }
+
+//* Ventana Modal
+function modalProduct(event){
+  if(event.target.classList.contains('product__details')){
+    modalContainer.classList.add('show__modal')
+    const product = event.target.parentElement.parentElement
+    modalDetailsElement(product)
+  }
+}
+
+function closeModal(event){
+  if(event.target.classList.contains('icon__modal')){
+    modalContainer.classList.remove('show__modal')
+    modalElement.innerHTML = "";
+    modalDetails = []
+  }
+}
+
+function modalDetailsElement(product){
+  const infoDetails = [{
+    id: product.querySelector('button').getAttribute('data-id'),
+    image: product.querySelector('img').src,
+    name: product.querySelector('.product__container__name p').textContent,
+    price: product.querySelector('.product__container__price p').textContent,
+  }]
+  modalDetails = [...infoDetails]
+  modalHTML();
+}
+
+function modalHTML() {
+
+  let modalDetailsHTML = "";
+
+  for(let element of modalDetails){
+    modalDetailsHTML += `
+      <div class="principal__element">
+        <div class="first__modal__section">
+          <div class="first__modal__text">
+            <p>${element.name}</p>
+            <p>${element.price}</p>
+          </div>
+          <div class="first__modal__colors">
+            <p>Colores</p>
+            <div>
+              <img src="${element.image}">
+            </div>
+          </div>
+          <div class="first__modal__sizes__text">
+            <div>
+              <p>Tallas</p>
+              <p>Guía de tallas</p>
+            </div>
+          </div>
+          <div class="first__modal__sizes">
+            <div>
+              <p>S</p>
+            </div>
+            <div>
+              <p>M</p>
+            </div>
+            <div>
+              <p>L</p>
+            </div>
+            <div>
+              <p>XL</p>
+            </div>
+            <div>
+              <p>2XL</p>
+            </div>
+            <div>
+              <p>3XL</p>
+            </div>
+          </div>
+        </div>
+        <div class="second__modal__section">
+          <div class="modal__vector"></div>
+          <img src="${element.image}">
+          
+        </div>
+      </div>
+    `;
+  }
+
+  modalElement.innerHTML = modalDetailsHTML;
+
+}
+
+//* Local Storage
+
+// Guardar información en local storage
+// localStorage.setItem("apellido", "Betancur")
