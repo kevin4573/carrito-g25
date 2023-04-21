@@ -15,7 +15,9 @@ let carProducts = [];
 //* Modal
 const modalContainer = document.querySelector('#modal-container');
 const modalElement = document.querySelector('#modal');
+const modalClick = document.querySelector('.modal__container__element');
 let modalDetails = [];
+
 
 //* lógica para mostrar y ocultar el carrito.
 carToggle.addEventListener('click', () => {
@@ -198,6 +200,17 @@ function closeModal(event){
   }
 }
 
+//** Evento para cerrar modal dinamicamente */
+
+document.addEventListener('keydown', function(e) {
+  if(e.key === 'Escape' ){
+    modalContainer.classList.remove('show__modal')
+    modalElement.innerHTML = "";
+    modalDetails = []
+  }
+});
+
+
 function modalDetailsElement(product){
   const infoDetails = [{
     id: product.querySelector('button').getAttribute('data-id'),
@@ -257,7 +270,6 @@ function modalHTML() {
         <div class="second__modal__section">
           <div class="modal__vector"></div>
           <img src="${element.image}">
-          
         </div>
       </div>
     `;
